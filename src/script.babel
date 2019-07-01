@@ -1,0 +1,135 @@
+const SESSION = "SESSION";
+const BREAK = "BREAK";
+const BEEP = "https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/success.mp3";
+const PLAYCOLOR = "#66ff66";
+const PAUSECOLOR = "red";
+
+$(document).ready(function(){
+  let break_length = 5;
+  let session_length = 25;
+  let time_left = session_length * 60;
+  let time_type = SESSION;
+  let timer = "";
+  
+  function getClockTime(seconds){
+    let min = (Math.floor(seconds/60)).toString().padStart(2,"0");
+    let sec = (seconds%60).toString().padStart(2,"0");
+    return min + ":" + sec; 
+  }
+  
+  function changeBreak(e){
+    let new_break = break_length + e.data.change;
+    if(new_break > 0 && new_break <= 60){
+      break_length = new_break;
+      $("#break-length").text(new_break);
+    }
+  }
+  
+  function changeSession(e){
+    let new_session = session_length + e.data.change;
+    if(new_session > 0 && new_session <= 60){
+      session_length = new_session;
+      time_left = session_length * 60;
+      $("#session-length").text(new_session);
+      $("#time-left").text(getClockTime(time_left));
+    }
+  }
+  
+  function reset(){
+    if(timer != ""){
+      clearInterval(timer); 
+      timer = "";
+    }
+    break_length = 5;
+    session_length = 25;
+    time_left = session_length * 60;
+    time_type = SESSION;
+    $("#beep").get(0).pause();
+    $("#beep").get(0).currentTime = 0;
+    $("#break-increment").css("visibility","visible");
+    $("#break-decrement").css("visibility","visible");
+    $("#session-increment").css("visibility","visible");
+    $("#session-decrement").css("visibility","visible");
+    $("#session-cont").css("color","white");
+    $("#break-cont").css("color","white");
+    $("#break-length").text(break_length);
+    $("#session-length").text(session_length);
+    $("#time-center").css("border-color","white");
+    $("#timer-label").css("color","white");
+    $("#timer-label").text(time_type);
+    $("#time-left").text(getClockTime(time_left));
+    $("#start_stop_button").addClass("fa-play");
+    $("#start_stop_button").removeClass("fa-pause");
+  }
+  
+  function startStop(){
+    if(timer == ""){
+      timer = setInterval(tickTime, 1000);
+      $("#start_stop_button").addClass("fa-pause");
+      $("#start_stop_button").removeClass("fa-play");
+      $("#break-increment").css("visibility","hidden");
+      $("#break-decrement").css("visibility","hidden");
+      $("#session-increment").css("visibility","hidden");
+      $("#session-decrement").css("visibility","hidden");
+      if(time_type == SESSION){
+        $("#session-cont").css("color",PLAYCOLOR);
+      }
+      else{
+        $("#break-cont").css("color",PLAYCOLOR);
+      }
+      $("#time-center").css("border-color",PLAYCOLOR);
+      $("#timer-label").css("color",PLAYCOLOR);
+      
+      $("#beep").get(0).currentTime = 0;
+      $("#beep").get(0).play();
+    }
+    else{
+      clearInterval(timer);
+      timer = "";
+      $("#start_stop_button").addClass("fa-play");
+      $("#start_stop_button").removeClass("fa-pause");
+      $("#time-center").css("border-color",PAUSECOLOR);
+      $("#timer-label").css("color",PAUSECOLOR);
+      if(time_type == SESSION){
+        $("#session-cont").css("color",PAUSECOLOR);
+        $("#break-cont").css("color","white");
+      }
+      else{
+        $("#session-cont").css("color","white");
+        $("#break-cont").css("color",PAUSECOLOR);
+      }
+    }
+  }
+  
+  function tickTime(){
+    if(time_left == 0){
+      if(time_type == SESSION){
+        time_type = BREAK;
+        time_left = break_length * 60;       
+        $("#session-cont").css("color","white");
+        $("#break-cont").css("color",PLAYCOLOR);
+      }
+      else{
+        time_type = SESSION;
+        time_left = session_length * 60;
+        $("#session-cont").css("color",PLAYCOLOR);
+        $("#break-cont").css("color","white");
+      }
+      $("#timer-label").text(time_type);
+      $("#beep").get(0).currentTime = 0;
+      $("#beep").get(0).play();
+    }
+    else{
+      time_left = time_left - 1;
+    }
+    $("#time-left").text(getClockTime(time_left));
+  }
+  
+  reset();
+  $("#break-increment").click({change: 1},changeBreak);
+  $("#break-decrement").click({change: -1},changeBreak);
+  $("#session-increment").click({change: 1},changeSession);
+  $("#session-decrement").click({change: -1},changeSession);
+  $("#start_stop").click(startStop);
+  $("#reset").click(reset);
+});
