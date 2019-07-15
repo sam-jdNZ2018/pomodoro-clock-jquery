@@ -15,5 +15,5 @@ Built using:
 * [Original Codepen Link](https://codepen.io/sam_donaldson2018/pen/JqgaYO)
 * [React Version Repository](https://github.com/sam-jdNZ2018/pomodoro-clock-react)
 * [React Redux Version Repository](https://github.com/sam-jdNZ2018/pomodoro-clock-react-redux)
-* [FreeCodeCamp 'Build a Pomodoro Clock Original Design Document](https://learn.freecodecamp.org/front-end-libraries/front-end-libraries-projects/build-a-pomodoro-clock
+* [FreeCodeCamp 'Build a Pomodoro Clock Original Design Document](https://learn.freecodecamp.org/front-end-libraries/front-end-libraries-projects/build-a-pomodoro-clock)
  
